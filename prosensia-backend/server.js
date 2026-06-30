@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; // Use Vercel's dynamic port if available
 
 app.use(cors());
 app.use(express.json());
@@ -50,7 +50,13 @@ app.get('/api/products', (req, res) => {
   res.json(products);
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`📦 Products: http://localhost:${PORT}/api/products`);
-});
+// Only listen on a port if we're running locally, not on Vercel
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📦 Products: http://localhost:${PORT}/api/products`);
+  });
+}
+
+// 👑 CRITICAL FOR VERCEL
+module.exports = app;
